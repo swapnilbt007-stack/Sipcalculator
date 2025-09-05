@@ -3,119 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIP Calculator</title>
+    <title>SIP Calculator - Offline</title>
     
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
-        /* Custom styles to mimic an Android app feel */
+        /* --- Base & Font Styling (Replaces Google Fonts) --- */
+        :root {
+            --bg-gray-900: #1a202c;
+            --bg-gray-800: #2d3748;
+            --bg-gray-700: #4a5568;
+            --text-white: #ffffff;
+            --text-gray-300: #d1d5db;
+            --text-gray-400: #9ca3af;
+            --blue-400: #60a5fa;
+            --blue-300: #93c5fd;
+            --blue-600: #2563eb;
+            --green-400: #4ade80;
+        }
         body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent; /* Disable tap highlight on mobile */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            -webkit-tap-highlight-color: transparent;
+            background-color: var(--bg-gray-900);
+            color: var(--text-white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
         }
 
-        /* Custom styles for sliders */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
+        /* --- Layout & Container (Replaces Tailwind Container/Spacing) --- */
+        .container {
             width: 100%;
-            height: 6px;
-            background: #4a5568; /* gray-700 */
-            border-radius: 5px;
+            max-width: 512px; /* lg */
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1rem; /* p-4 */
+            box-sizing: border-box;
+        }
+        .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
+        .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+        .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+        .space-x-2 > :not([hidden]) ~ :not([hidden]) { margin-left: 0.5rem; }
+
+        /* --- General Utilities (Replaces Tailwind Classes) --- */
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .text-center { text-align: center; }
+        .hidden { display: none; }
+        .w-full { width: 100%; }
+        .w-1\/2 { width: 50%; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-t-2xl { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+        .rounded-b-2xl { border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .transition { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-duration: 150ms; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        .sticky { position: sticky; }
+        .top-0 { top: 0; }
+        .z-10 { z-index: 10; }
+
+        /* --- Typography --- */
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .font-medium { font-weight: 500; }
+
+        /* --- Colors --- */
+        .bg-gray-900 { background-color: var(--bg-gray-900); }
+        .bg-gray-800 { background-color: var(--bg-gray-800); }
+        .bg-gray-700 { background-color: var(--bg-gray-700); }
+        .bg-blue-600 { background-color: var(--blue-600); }
+        .text-blue-400 { color: var(--blue-400); }
+        .text-blue-300 { color: var(--blue-300); }
+        .text-green-400 { color: var(--green-400); }
+        .text-gray-400 { color: var(--text-gray-400); }
+        .text-gray-300 { color: var(--text-gray-300); }
+        .text-white { color: var(--text-white); }
+        
+        /* --- Header & Tabs --- */
+        header { padding-bottom: 1rem; }
+        header p { color: var(--text-gray-400); }
+        .tab-btn { border: none; background: none; cursor: pointer; }
+        .tab-btn:hover { background-color: var(--bg-gray-700); }
+
+        /* --- Main Content & Inputs --- */
+        main { padding: 1.5rem; }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-gray-700);
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.75rem;
+        }
+        .input-group:focus-within {
+            box-shadow: 0 0 0 2px var(--blue-600);
+        }
+        input[type="number"] {
+            color: inherit;
+            font: inherit;
+            background: transparent;
+            text-align: right;
             outline: none;
-            transition: opacity .2s;
+            -moz-appearance: textfield;
+            width: 7rem; /* w-28 */
         }
-
-        input[type="range"]::-webkit-slider-thumb {
+        input[type="number"].lumpsum { width: 8rem; } /* w-32 */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #4299e1; /* blue-400 */
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #1a202c; /* gray-900 */
+            margin: 0;
         }
 
+        /* --- Sliders --- */
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 6px; background: var(--bg-gray-700);
+            border-radius: 5px; outline: none; transition: opacity .2s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 20px; height: 20px; background: var(--blue-400);
+            cursor: pointer; border-radius: 50%; border: 2px solid var(--bg-gray-900);
+        }
         input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #4299e1; /* blue-400 */
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #1a202c; /* gray-900 */
+            width: 20px; height: 20px; background: var(--blue-400);
+            cursor: pointer; border-radius: 50%; border: 2px solid var(--bg-gray-900);
         }
-
-        /* Add a subtle glow to focused elements for better accessibility */
-        .focusable:focus-within {
-             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
-        }
+        
+        /* --- Results & Chart --- */
+        section { padding: 1.5rem; background-color: var(--bg-gray-800); border-radius: 1rem; margin-top: 1.5rem; }
+        section.chart-section { padding: 1rem; }
+        hr { border: 0; border-top: 1px solid var(--bg-gray-700); margin: 1rem 0; }
     </style>
 </head>
-<body class="bg-gray-900 text-white antialiased">
+<body class="antialiased">
 
-    <div class="container mx-auto max-w-lg p-4 space-y-6">
+    <div class="container">
 
         <!-- Header -->
-        <header class="text-center">
+        <header class="text-center space-y-2">
             <h1 class="text-2xl font-bold text-blue-400">SIP Calculator</h1>
-            <p class="text-gray-400">Plan your future investments with ease.</p>
+            <p>Plan your future investments with ease.</p>
         </header>
 
         <!-- Tab Navigation -->
-        <div class="bg-gray-800 rounded-t-2xl p-2 sticky top-0 z-10">
+        <div class="bg-gray-900 rounded-t-2xl p-2 sticky top-0 z-10">
             <nav class="flex space-x-2" aria-label="Tabs">
                 <button id="sipTab" class="tab-btn text-white bg-blue-600 px-4 py-2 w-1/2 text-center font-semibold rounded-lg transition">
                     SIP
                 </button>
-                <button id="lumpsumTab" class="tab-btn text-gray-400 hover:bg-gray-700 px-4 py-2 w-1/2 text-center font-semibold rounded-lg transition">
+                <button id="lumpsumTab" class="tab-btn text-gray-400 px-4 py-2 w-1/2 text-center font-semibold rounded-lg transition">
                     Lump Sum
                 </button>
             </nav>
         </div>
 
         <!-- Main Calculator Section -->
-        <main class="bg-gray-800 p-6 rounded-b-2xl shadow-lg">
-            
+        <main class="bg-gray-800 rounded-b-2xl shadow-lg">
             <!-- SIP Content -->
             <div id="sipContent" class="space-y-6">
                 <!-- Monthly Investment Input -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label for="monthlyInvestment" class="font-medium text-gray-300">Monthly Investment</label>
-                         <div class="flex items-center bg-gray-700 rounded-lg px-3 py-1 focus-within:ring-2 focus-within:ring-blue-500">
+                         <div class="input-group">
                             <span class="text-lg font-semibold text-blue-300 mr-1">₹</span>
-                            <input type="number" id="monthlyInvestmentInput" value="10000" class="bg-transparent text-lg font-semibold text-blue-300 w-28 text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                            <input type="number" inputmode="numeric" pattern="[0-9]*" id="monthlyInvestmentInput" value="10000" class="text-lg font-semibold text-blue-300">
                         </div>
                     </div>
-                    <input type="range" id="monthlyInvestment" min="500" max="100000" step="500" value="10000" class="w-full">
+                    <input type="range" id="monthlyInvestment" min="500" max="100000" step="500" value="10000">
                 </div>
-
                 <!-- Expected Return Rate Input (SIP) -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label for="returnRateSip" class="font-medium text-gray-300">Expected Return Rate (p.a.)</label>
                         <span class="text-lg font-semibold text-blue-300"><span id="returnRateSipValue">12</span>%</span>
                     </div>
-                    <input type="range" id="returnRateSip" min="1" max="30" step="0.5" value="12" class="w-full">
+                    <input type="range" id="returnRateSip" min="1" max="30" step="0.5" value="12">
                 </div>
-
                 <!-- Time Period Input (SIP) -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label for="timePeriodSip" class="font-medium text-gray-300">Time Period</label>
                         <span class="text-lg font-semibold text-blue-300"><span id="timePeriodSipValue">10</span> Years</span>
                     </div>
-                    <input type="range" id="timePeriodSip" min="1" max="40" step="1" value="10" class="w-full">
+                    <input type="range" id="timePeriodSip" min="1" max="40" step="1" value="10">
                 </div>
             </div>
 
@@ -125,37 +198,34 @@
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label for="lumpsum" class="font-medium text-gray-300">Lump Sum Investment</label>
-                        <div class="flex items-center bg-gray-700 rounded-lg px-3 py-1 focus-within:ring-2 focus-within:ring-blue-500">
+                        <div class="input-group">
                             <span class="text-lg font-semibold text-blue-300 mr-1">₹</span>
-                            <input type="number" id="lumpsumInput" value="500000" class="bg-transparent text-lg font-semibold text-blue-300 w-32 text-right focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                            <input type="number" inputmode="numeric" pattern="[0-9]*" id="lumpsumInput" value="500000" class="text-lg font-semibold text-blue-300 lumpsum">
                         </div>
                     </div>
-                    <input type="range" id="lumpsum" min="10000" max="2000000" step="10000" value="500000" class="w-full">
+                    <input type="range" id="lumpsum" min="10000" max="2000000" step="10000" value="500000">
                 </div>
-                
                 <!-- Expected Return Rate Input (Lumpsum) -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label for="returnRateLumpsum" class="font-medium text-gray-300">Expected Return Rate (p.a.)</label>
                         <span class="text-lg font-semibold text-blue-300"><span id="returnRateLumpsumValue">12</span>%</span>
                     </div>
-                    <input type="range" id="returnRateLumpsum" min="1" max="30" step="0.5" value="12" class="w-full">
+                    <input type="range" id="returnRateLumpsum" min="1" max="30" step="0.5" value="12">
                 </div>
-
                 <!-- Time Period Input (Lumpsum) -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label for="timePeriodLumpsum" class="font-medium text-gray-300">Time Period</label>
                         <span class="text-lg font-semibold text-blue-300"><span id="timePeriodLumpsumValue">10</span> Years</span>
                     </div>
-                    <input type="range" id="timePeriodLumpsum" min="1" max="40" step="1" value="10" class="w-full">
+                    <input type="range" id="timePeriodLumpsum" min="1" max="40" step="1" value="10">
                 </div>
             </div>
-
         </main>
 
         <!-- Results Section -->
-        <section id="results" class="bg-gray-800 p-6 rounded-2xl shadow-lg space-y-4">
+        <section id="results" class="shadow-lg space-y-4">
             <div class="flex justify-between items-center">
                 <span class="text-gray-400">Invested Amount</span>
                 <span id="investedAmount" class="text-xl font-bold">₹ 0</span>
@@ -164,250 +234,246 @@
                 <span class="text-gray-400">Estimated Returns</span>
                 <span id="estimatedReturns" class="text-xl font-bold text-green-400">₹ 0</span>
             </div>
-            <hr class="border-gray-700">
+            <hr>
             <div class="flex justify-between items-center">
-                <span class="text-gray-400 font-semibold">Total Value</span>
+                <span class="font-semibold text-gray-300">Total Value</span>
                 <span id="totalValue" class="text-2xl font-bold text-green-400">₹ 0</span>
             </div>
         </section>
 
         <!-- Chart Section -->
-        <section class="bg-gray-800 p-4 rounded-2xl shadow-lg">
-            <canvas id="investmentChart"></canvas>
+        <section class="chart-section shadow-lg">
+            <div id="investmentChartContainer" class="w-full" style="height: 256px;"></div>
         </section>
 
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM Elements ---
-            const sipTab = document.getElementById('sipTab');
-            const lumpsumTab = document.getElementById('lumpsumTab');
-            const sipContent = document.getElementById('sipContent');
-            const lumpsumContent = document.getElementById('lumpsumContent');
-
-            // SIP Inputs
-            const monthlyInvestmentSlider = document.getElementById('monthlyInvestment');
-            const monthlyInvestmentInput = document.getElementById('monthlyInvestmentInput');
-            const returnRateSipSlider = document.getElementById('returnRateSip');
-            const timePeriodSipSlider = document.getElementById('timePeriodSip');
-            const returnRateSipValue = document.getElementById('returnRateSipValue');
-            const timePeriodSipValue = document.getElementById('timePeriodSipValue');
-            
-            // Lumpsum Inputs
-            const lumpsumSlider = document.getElementById('lumpsum');
-            const lumpsumInput = document.getElementById('lumpsumInput');
-            const returnRateLumpsumSlider = document.getElementById('returnRateLumpsum');
-            const timePeriodLumpsumSlider = document.getElementById('timePeriodLumpsum');
-            const returnRateLumpsumValue = document.getElementById('returnRateLumpsumValue');
-            const timePeriodLumpsumValue = document.getElementById('timePeriodLumpsumValue');
-
-            // Results Elements
-            const investedAmountEl = document.getElementById('investedAmount');
-            const estimatedReturnsEl = document.getElementById('estimatedReturns');
-            const totalValueEl = document.getElementById('totalValue');
-
-            // Chart
-            const chartCanvas = document.getElementById('investmentChart');
-            let investmentChart;
-            let activeTab = 'sip';
-            
-            // Indian currency formatter
-            const inrFormatter = new Intl.NumberFormat('en-IN', {
-                style: 'currency',
-                currency: 'INR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-            });
-
-            // --- Tab Switching Logic ---
-            function switchTab(tab) {
-                activeTab = tab;
-                if (tab === 'sip') {
-                    // Update UI for SIP tab
-                    sipTab.classList.add('bg-blue-600', 'text-white');
-                    sipTab.classList.remove('text-gray-400', 'hover:bg-gray-700');
-                    lumpsumTab.classList.remove('bg-blue-600', 'text-white');
-                    lumpsumTab.classList.add('text-gray-400', 'hover:bg-gray-700');
-                    
-                    sipContent.classList.remove('hidden');
-                    lumpsumContent.classList.add('hidden');
-                } else {
-                    // Update UI for Lumpsum tab
-                    lumpsumTab.classList.add('bg-blue-600', 'text-white');
-                    lumpsumTab.classList.remove('text-gray-400', 'hover:bg-gray-700');
-                    sipTab.classList.remove('bg-blue-600', 'text-white');
-                    sipTab.classList.add('text-gray-400', 'hover:bg-gray-700');
-
-                    lumpsumContent.classList.remove('hidden');
-                    sipContent.classList.add('hidden');
-                }
-                calculateAndDisplay();
+        // Self-invoking function to avoid polluting the global scope
+        (() => {
+            // --- Wait for DOM to be ready ---
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeCalculator);
+            } else {
+                initializeCalculator();
             }
 
-            // --- Calculation Logic ---
-            function calculateAndDisplay() {
-                let P = 0, L = 0, annualRate = 0, t = 0;
+            function initializeCalculator() {
+                try {
+                    // --- State and Cache ---
+                    const elements = {
+                        sipTab: document.getElementById('sipTab'),
+                        lumpsumTab: document.getElementById('lumpsumTab'),
+                        sipContent: document.getElementById('sipContent'),
+                        lumpsumContent: document.getElementById('lumpsumContent'),
+                        monthlyInvestmentSlider: document.getElementById('monthlyInvestment'),
+                        monthlyInvestmentInput: document.getElementById('monthlyInvestmentInput'),
+                        returnRateSipSlider: document.getElementById('returnRateSip'),
+                        timePeriodSipSlider: document.getElementById('timePeriodSip'),
+                        returnRateSipValue: document.getElementById('returnRateSipValue'),
+                        timePeriodSipValue: document.getElementById('timePeriodSipValue'),
+                        lumpsumSlider: document.getElementById('lumpsum'),
+                        lumpsumInput: document.getElementById('lumpsumInput'),
+                        returnRateLumpsumSlider: document.getElementById('returnRateLumpsum'),
+                        timePeriodLumpsumSlider: document.getElementById('timePeriodLumpsum'),
+                        returnRateLumpsumValue: document.getElementById('returnRateLumpsumValue'),
+                        timePeriodLumpsumValue: document.getElementById('timePeriodLumpsumValue'),
+                        investedAmountEl: document.getElementById('investedAmount'),
+                        estimatedReturnsEl: document.getElementById('estimatedReturns'),
+                        totalValueEl: document.getElementById('totalValue'),
+                        chartContainer: document.getElementById('investmentChartContainer')
+                    };
+                    let activeTab = 'sip';
+                    const inrFormatter = new Intl.NumberFormat('en-IN', {
+                        style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0,
+                    });
 
-                if (activeTab === 'sip') {
-                    P = parseFloat(monthlyInvestmentSlider.value);
-                    L = 0;
-                    annualRate = parseFloat(returnRateSipSlider.value);
-                    t = parseFloat(timePeriodSipSlider.value);
-                } else {
-                    P = 0;
-                    L = parseFloat(lumpsumSlider.value);
-                    annualRate = parseFloat(returnRateLumpsumSlider.value);
-                    t = parseFloat(timePeriodLumpsumSlider.value);
-                }
+                    // --- Core Logic ---
+                    function updateCalculations() {
+                        try {
+                            elements.returnRateSipValue.textContent = elements.returnRateSipSlider.value;
+                            elements.timePeriodSipValue.textContent = elements.timePeriodSipSlider.value;
+                            elements.returnRateLumpsumValue.textContent = elements.returnRateLumpsumSlider.value;
+                            elements.timePeriodLumpsumValue.textContent = elements.timePeriodLumpsumSlider.value;
 
-                const n = t * 12; // Number of months
-                const i = (annualRate / 100) / 12; // Monthly interest rate
+                            let P = 0, L = 0, annualRate = 0, t = 0;
 
-                // --- Future Value Calculations ---
-                
-                // 1. Future Value of SIP
-                const sipFutureValue = n > 0 && P > 0 ? P * (Math.pow(1 + i, n) - 1) / i * (1 + i) : 0;
-
-                // 2. Future Value of Lump Sum
-                const lumpsumFutureValue = L > 0 ? L * Math.pow(1 + i, n) : 0;
-
-                const totalValue = sipFutureValue + lumpsumFutureValue;
-                const totalInvestment = (P * n) + L;
-                const estimatedReturns = totalValue - totalInvestment;
-
-                // --- Display Results ---
-                investedAmountEl.textContent = inrFormatter.format(totalInvestment);
-                estimatedReturnsEl.textContent = inrFormatter.format(estimatedReturns > 0 ? estimatedReturns : 0);
-                totalValueEl.textContent = inrFormatter.format(totalValue > 0 ? totalValue : 0);
-
-                // --- Update Chart ---
-                updateChart(P, L, annualRate, t);
-            }
-
-            // --- Chart Visualization ---
-            function updateChart(P, L, annualRate, t) {
-                const labels = Array.from({ length: t + 1 }, (_, i) => `Year ${i}`);
-                const investedData = [];
-                const valueData = [];
-                const monthlyRate = (annualRate / 100) / 12;
-
-                for (let year = 0; year <= t; year++) {
-                    const months = year * 12;
-                    
-                    // Total invested up to this year
-                    const currentInvested = (P * months) + L;
-                    investedData.push(currentInvested);
-                    
-                    // Total value up to this year
-                    const currentSipValue = months > 0 ? P * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate) : 0;
-                    const currentLumpsumValue = L * Math.pow(1 + monthlyRate, months);
-                    valueData.push(currentSipValue + currentLumpsumValue);
-                }
-
-                if (investmentChart) {
-                    investmentChart.destroy();
-                }
-
-                investmentChart = new Chart(chartCanvas, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Total Investment',
-                            data: investedData,
-                            borderColor: '#63b3ed', // blue-300
-                            backgroundColor: 'rgba(99, 179, 237, 0.2)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.3
-                        }, {
-                            label: 'Total Value',
-                            data: valueData,
-                            borderColor: '#68d391', // green-400
-                            backgroundColor: 'rgba(104, 211, 145, 0.2)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: '#cbd5e0' // gray-400
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.y !== null) {
-                                            label += inrFormatter.format(context.parsed.y);
-                                        }
-                                        return label;
-                                    }
-                                }
+                            if (activeTab === 'sip') {
+                                P = parseFloat(elements.monthlyInvestmentSlider.value) || 0;
+                                annualRate = parseFloat(elements.returnRateSipSlider.value) || 0;
+                                t = parseFloat(elements.timePeriodSipSlider.value) || 0;
+                            } else {
+                                L = parseFloat(elements.lumpsumSlider.value) || 0;
+                                annualRate = parseFloat(elements.returnRateLumpsumSlider.value) || 0;
+                                t = parseFloat(elements.timePeriodLumpsumSlider.value) || 0;
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#a0aec0', // gray-500
-                                    callback: function(value, index, values) {
-                                        if (value >= 10000000) return (value / 10000000).toFixed(1) + ' Cr';
-                                        if (value >= 100000) return (value / 100000).toFixed(1) + ' L';
-                                        if (value >= 1000) return (value / 1000).toFixed(1) + ' K';
-                                        return value;
-                                    }
-                                },
-                                grid: {
-                                    color: '#4a5568' // gray-700
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: '#a0aec0' // gray-500
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
+
+                            const n = t * 12;
+                            const i = (annualRate / 100) / 12;
+                            const sipFutureValue = (n > 0 && P > 0 && i > 0) ? P * (Math.pow(1 + i, n) - 1) / i * (1 + i) : (P * n);
+                            const lumpsumFutureValue = (L > 0 && n > 0) ? L * Math.pow(1 + i, n) : L;
+                            const totalValue = sipFutureValue + lumpsumFutureValue;
+                            const totalInvestment = (P * n) + L;
+                            const estimatedReturns = totalValue - totalInvestment;
+                            
+                            elements.investedAmountEl.textContent = inrFormatter.format(totalInvestment);
+                            elements.estimatedReturnsEl.textContent = inrFormatter.format(estimatedReturns > 0 ? estimatedReturns : 0);
+                            elements.totalValueEl.textContent = inrFormatter.format(totalValue > 0 ? totalValue : 0);
+                            
+                            updateSvgChart(P, L, annualRate, t);
+                        } catch (error) {
+                            console.error("Error during calculation update:", error);
                         }
                     }
-                });
+                    
+                    // --- UI Updates ---
+                    function switchTab(tab) {
+                        activeTab = tab;
+                        if (tab === 'sip') {
+                            elements.sipTab.style.backgroundColor = 'var(--blue-600)';
+                            elements.sipTab.style.color = 'var(--text-white)';
+                            elements.lumpsumTab.style.backgroundColor = 'transparent';
+                            elements.lumpsumTab.style.color = 'var(--text-gray-400)';
+                            elements.sipContent.classList.remove('hidden');
+                            elements.lumpsumContent.classList.add('hidden');
+                        } else {
+                            elements.lumpsumTab.style.backgroundColor = 'var(--blue-600)';
+                            elements.lumpsumTab.style.color = 'var(--text-white)';
+                            elements.sipTab.style.backgroundColor = 'transparent';
+                            elements.sipTab.style.color = 'var(--text-gray-400)';
+                            elements.lumpsumContent.classList.remove('hidden');
+                            elements.sipContent.classList.add('hidden');
+                        }
+                        updateCalculations();
+                    }
+                    
+                    // --- Charting ---
+                    function updateSvgChart(P, L, annualRate, t) {
+                        try {
+                            const container = elements.chartContainer;
+                            const chartWidth = container.clientWidth;
+                            const chartHeight = container.clientHeight;
+                            if (chartWidth === 0 || chartHeight === 0) return;
+
+                            const years = Array.from({ length: t + 1 }, (_, i) => i);
+                            const investedData = [], valueData = [];
+                            const monthlyRate = (annualRate / 100) / 12;
+
+                            for (const year of years) {
+                                const months = year * 12;
+                                investedData.push((P * months) + L);
+                                const currentSipValue = (months > 0 && P > 0 && monthlyRate > 0) ? P * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate * (1 + monthlyRate) : (P * months);
+                                const currentLumpsumValue = (L > 0 && months > 0) ? L * Math.pow(1 + monthlyRate, months) : L;
+                                valueData.push(currentSipValue + currentLumpsumValue);
+                            }
+
+                            const maxValue = Math.max(1, ...valueData);
+                            const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+
+                            const xScale = (val) => padding.left + (t > 0 ? (val / t) : 0) * (chartWidth - padding.left - padding.right);
+                            const yScale = (val) => (chartHeight - padding.bottom) - (val / maxValue) * (chartHeight - padding.bottom - padding.top);
+
+                            const createPath = (data) => 'M' + years.map((y, i) => `${xScale(y).toFixed(2)} ${yScale(data[i]).toFixed(2)}`).join(' L');
+                            const investedPath = createPath(investedData);
+                            const valuePath = createPath(valueData);
+
+                            let yAxis = '', xAxis = '';
+                            const formatYAxisLabel = (value) => {
+                                if (value >= 10000000) return (value / 10000000).toFixed(1) + ' Cr';
+                                if (value >= 100000) return (value / 100000).toFixed(1) + ' L';
+                                if (value >= 1000) return (value / 1000).toFixed(1) + ' K';
+                                return Math.round(value);
+                            };
+                            for (let i = 0; i <= 5; i++) {
+                                const value = (maxValue / 5) * i;
+                                const y = yScale(value);
+                                yAxis += `<line x1="${padding.left}" y1="${y}" x2="${chartWidth - padding.right}" y2="${y}" stroke="#4a5568" stroke-dasharray="2,2" /><text x="${padding.left - 10}" y="${y + 4}" fill="#a0aec0" text-anchor="end" font-size="12">${formatYAxisLabel(value)}</text>`;
+                            }
+                            const xLabelCount = Math.min(t, 5);
+                            if(t > 0) {
+                                for (let i = 0; i <= xLabelCount; i++) {
+                                    const year = Math.round((t / xLabelCount) * i);
+                                    xAxis += `<text x="${xScale(year)}" y="${chartHeight - padding.bottom + 20}" fill="#a0aec0" text-anchor="middle" font-size="12">${year}Y</text>`;
+                                }
+                            } else {
+                                 xAxis += `<text x="${xScale(0)}" y="${chartHeight - padding.bottom + 20}" fill="#a0aec0" text-anchor="middle" font-size="12">0Y</text>`;
+                            }
+
+                            const legend = `<rect x="${padding.left}" y="0" width="10" height="10" fill="#60a5fa" /><text x="${padding.left + 15}" y="9" fill="#d1d5db" font-size="12">Invested</text><rect x="${padding.left + 80}" y="0" width="10" height="10" fill="#4ade80" /><text x="${padding.left + 95}" y="9" fill="#d1d5db" font-size="12">Value</text>`;
+                            
+                            container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 ${chartWidth} ${chartHeight}">${yAxis}${xAxis}<path d="${investedPath}" stroke="#60a5fa" fill="none" stroke-width="2" /><path d="${valuePath}" stroke="#4ade80" fill="none" stroke-width="2" />${legend}</svg>`;
+                        } catch (error) {
+                            console.error("Error drawing SVG chart:", error);
+                            elements.chartContainer.innerHTML = `<p style="color: #9ca3af; text-align: center;">Chart could not be drawn.</p>`;
+                        }
+                    }
+
+                    // --- Event Listener Setup ---
+                    function setupEventListeners() {
+                        elements.sipTab.addEventListener('click', () => switchTab('sip'));
+                        elements.lumpsumTab.addEventListener('click', () => switchTab('lumpsum'));
+
+                        // Explicitly connect all interactive elements
+                        const allInputs = [
+                            elements.monthlyInvestmentInput, elements.monthlyInvestmentSlider,
+                            elements.returnRateSipSlider, elements.timePeriodSipSlider,
+                            elements.lumpsumInput, elements.lumpsumSlider,
+                            elements.returnRateLumpsumSlider, elements.timePeriodLumpsumSlider
+                        ];
+                        
+                        allInputs.forEach(input => {
+                            input.addEventListener('input', updateCalculations);
+                        });
+
+                        // Sync text inputs with sliders
+                        elements.monthlyInvestmentInput.addEventListener('input', () => {
+                            elements.monthlyInvestmentSlider.value = elements.monthlyInvestmentInput.value;
+                        });
+                        elements.monthlyInvestmentSlider.addEventListener('input', () => {
+                            elements.monthlyInvestmentInput.value = elements.monthlyInvestmentSlider.value;
+                        });
+                        elements.lumpsumInput.addEventListener('input', () => {
+                            elements.lumpsumSlider.value = elements.lumpsumInput.value;
+                        });
+                        elements.lumpsumSlider.addEventListener('input', () => {
+                            elements.lumpsumInput.value = elements.lumpsumSlider.value;
+                        });
+
+                        // Add blur validation for number inputs
+                        const validateOnBlur = (inputEl, sliderEl) => {
+                             inputEl.addEventListener('blur', () => {
+                                const min = parseFloat(sliderEl.min);
+                                const max = parseFloat(sliderEl.max);
+                                let value = Math.max(min, parseFloat(inputEl.value) || min);
+                                if (value > max) value = max;
+                                inputEl.value = value;
+                                sliderEl.value = value;
+                                updateCalculations();
+                            });
+                        };
+                        validateOnBlur(elements.monthlyInvestmentInput, elements.monthlyInvestmentSlider);
+                        validateOnBlur(elements.lumpsumInput, elements.lumpsumSlider);
+
+
+                        // Redraw chart on resize
+                        let resizeTimeout;
+                        window.addEventListener('resize', () => {
+                            clearTimeout(resizeTimeout);
+                            resizeTimeout = setTimeout(updateCalculations, 150);
+                        });
+                    }
+                    
+                    // --- Initialization ---
+                    setupEventListeners();
+                    switchTab('sip');
+
+                } catch (error) {
+                    console.error("Critical error on initialization:", error);
+                    document.body.innerHTML = '<p style="color:red;padding:1rem;">A critical error occurred. The calculator cannot start.</p>';
+                }
             }
+        })();
+    </script>
+</body>
+</html>
 
-            // --- Event Listeners ---
-            sipTab.addEventListener('click', () => switchTab('sip'));
-            lumpsumTab.addEventListener('click', () => switchTab('lumpsum'));
-
-            // SIP Listeners
-            monthlyInvestmentSlider.addEventListener('input', () => {
-                monthlyInvestmentInput.value = monthlyInvestmentSlider.value;
-                calculateAndDisplay();
-            });
-            monthlyInvestmentInput.addEventListener('input', () => {
-                const value = Math.max(0, parseInt(monthlyInvestmentInput.value) || 0);
-                monthlyInvestmentSlider.value = value;
-                calculateAndDisplay();
-            });
-            monthlyInvestmentInput.addEventListener('blur', () => {
-                const min = parseInt(monthlyInvestmentSlider.min);
-                const max = parseInt(monthlyInvestmentSlider.max);
-                let value = Math.max(min, parseInt(monthlyInvestmentInput.value) || min);
-                if (value > max) value = max;
-                monthlyInvestmentInput.value = value;
-                monthlyInvestmentSlider.value = value;
-                calculateAndDisplay();
-            });
-            returnRateSipSlider.addEventListener('input', () => {
-                returnRateSipValue.textContent = returnRateSipSlider.value;
-                calculateAndDisplay();
-       
