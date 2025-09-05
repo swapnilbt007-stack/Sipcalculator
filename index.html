@@ -3,255 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIP Calculator - Offline</title>
+    <title>SIP Calculator - Modern UI</title>
     
     <style>
-        /* --- Base & Font Styling (Replaces Google Fonts) --- */
+        /* --- MODERN UI STYLES --- */
         :root {
-            --bg-gray-900: #1a202c;
-            --bg-gray-800: #2d3748;
-            --bg-gray-700: #4a5568;
-            --text-white: #ffffff;
-            --text-gray-300: #d1d5db;
-            --text-gray-400: #9ca3af;
-            --blue-400: #60a5fa;
-            --blue-300: #93c5fd;
-            --blue-600: #2563eb;
-            --green-400: #4ade80;
+            --bg-dark-slate: #111827;
+            --bg-slate: #1f2937;
+            --bg-light-slate: #374151;
+            --border-slate: #4b5563;
+            --text-light-gray: #d1d5db;
+            --text-gray: #9ca3af;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-teal: #14b8a6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
         }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            -webkit-tap-highlight-color: transparent;
-            background-color: var(--bg-gray-900);
-            color: var(--text-white);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(170deg, var(--bg-dark-slate), #0d121c);
+            color: var(--text-light-gray);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        /* --- Layout & Container (Replaces Tailwind Container/Spacing) --- */
         .container {
             width: 100%;
-            max-width: 512px; /* lg */
-            margin-left: auto;
-            margin-right: auto;
-            padding: 1rem; /* p-4 */
+            max-width: 500px;
+            padding: 1rem;
             box-sizing: border-box;
+            animation: fadeIn 0.5s ease-out;
         }
-        .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
-        .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
-        .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
-        .space-x-2 > :not([hidden]) ~ :not([hidden]) { margin-left: 0.5rem; }
 
-        /* --- General Utilities (Replaces Tailwind Classes) --- */
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .text-center { text-align: center; }
-        .hidden { display: none; }
-        .w-full { width: 100%; }
-        .w-1\/2 { width: 50%; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-2xl { border-radius: 1rem; }
-        .rounded-t-2xl { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
-        .rounded-b-2xl { border-bottom-left-radius: 1rem; border-bottom-right-radius: 1rem; }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
-        .transition { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-duration: 150ms; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-        .sticky { position: sticky; }
-        .top-0 { top: 0; }
-        .z-10 { z-index: 10; }
-
-        /* --- Typography --- */
-        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .font-bold { font-weight: 700; }
-        .font-semibold { font-weight: 600; }
-        .font-medium { font-weight: 500; }
-
-        /* --- Colors --- */
-        .bg-gray-900 { background-color: var(--bg-gray-900); }
-        .bg-gray-800 { background-color: var(--bg-gray-800); }
-        .bg-gray-700 { background-color: var(--bg-gray-700); }
-        .bg-blue-600 { background-color: var(--blue-600); }
-        .text-blue-400 { color: var(--blue-400); }
-        .text-blue-300 { color: var(--blue-300); }
-        .text-green-400 { color: var(--green-400); }
-        .text-gray-400 { color: var(--text-gray-400); }
-        .text-gray-300 { color: var(--text-gray-300); }
-        .text-white { color: var(--text-white); }
-        
-        /* --- Header & Tabs --- */
-        header { padding-bottom: 1rem; }
-        header p { color: var(--text-gray-400); }
-        .tab-btn { border: none; background: none; cursor: pointer; }
-        .tab-btn:hover { background-color: var(--bg-gray-700); }
-
-        /* --- Main Content & Inputs --- */
-        main { padding: 1.5rem; }
-        .input-group {
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-gray-700);
-            border-radius: 0.5rem;
-            padding: 0.25rem 0.75rem;
+        header {
+            text-align: center;
+            padding-bottom: 2rem;
         }
-        .input-group:focus-within {
-            box-shadow: 0 0 0 2px var(--blue-600);
-        }
-        input[type="number"] {
-            color: inherit;
-            font: inherit;
-            background: transparent;
-            text-align: right;
-            outline: none;
-            -moz-appearance: textfield;
-            width: 7rem; /* w-28 */
-        }
-        input[type="number"].lumpsum { width: 8rem; } /* w-32 */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
+        header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.025em;
             margin: 0;
         }
+        header p {
+            color: var(--text-gray);
+            margin-top: 0.5rem;
+        }
 
-        /* --- Sliders --- */
+        .tabs-container {
+            background-color: var(--bg-slate);
+            border-radius: 0.75rem;
+            padding: 0.25rem;
+            display: flex;
+            position: relative;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem 0;
+            border: none;
+            background: none;
+            color: var(--text-gray);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+        .tab-btn.active {
+            color: white;
+        }
+        .tab-highlight {
+            position: absolute;
+            top: 0.25rem;
+            bottom: 0.25rem;
+            width: calc(50% - 0.25rem);
+            background-color: var(--accent-blue);
+            border-radius: 0.5rem;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        main {
+            background-color: var(--bg-slate);
+            border-radius: 1rem;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+        }
+        
+        .input-block { margin-bottom: 2rem; }
+        .input-block:last-child { margin-bottom: 0; }
+
+        .label-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1rem;
+        }
+        .label-group label {
+            font-weight: 500;
+            color: var(--text-light-gray);
+        }
+        .input-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+        .input-value-small {
+            font-size: 1rem;
+            color: var(--text-light-gray);
+        }
+
         input[type="range"] {
             -webkit-appearance: none; appearance: none;
-            width: 100%; height: 6px; background: var(--bg-gray-700);
-            border-radius: 5px; outline: none; transition: opacity .2s;
+            width: 100%; height: 8px; background: var(--bg-dark-slate);
+            border-radius: 4px; outline: none; transition: background 0.2s;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none; appearance: none;
-            width: 20px; height: 20px; background: var(--blue-400);
-            cursor: pointer; border-radius: 50%; border: 2px solid var(--bg-gray-900);
+            width: 22px; height: 22px; background: white;
+            cursor: pointer; border-radius: 50%;
+            border: 5px solid var(--accent-blue);
+            transition: transform 0.2s ease;
+        }
+        input[type="range"]:active::-webkit-slider-thumb {
+            transform: scale(1.1);
         }
         input[type="range"]::-moz-range-thumb {
-            width: 20px; height: 20px; background: var(--blue-400);
-            cursor: pointer; border-radius: 50%; border: 2px solid var(--bg-gray-900);
+            width: 12px; height: 12px; background: white;
+            cursor: pointer; border-radius: 50%;
+            border: 5px solid var(--accent-blue);
         }
         
-        /* --- Results & Chart --- */
-        section { padding: 1.5rem; background-color: var(--bg-gray-800); border-radius: 1rem; margin-top: 1.5rem; }
-        section.chart-section { padding: 1rem; }
-        hr { border: 0; border-top: 1px solid var(--bg-gray-700); margin: 1rem 0; }
+        .number-input-wrapper {
+            background-color: var(--bg-dark-slate);
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--border-slate);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .number-input-wrapper:focus-within {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        input[type="number"] {
+            background: none; border: none; outline: none;
+            color: white; font-weight: 600; font-size: 1.125rem;
+            text-align: right; width: 100%;
+             -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+             -webkit-appearance: none; margin: 0;
+        }
+
+        .results-section {
+            background: linear-gradient(135deg, var(--bg-slate), #222c3d);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+        .result-row span:first-child { color: var(--text-gray); }
+        .result-row span:last-child { font-weight: 600; font-size: 1.1rem; }
+        hr { border: 0; border-top: 1px solid var(--border-slate); margin: 1rem 0; }
+        .total-value-row span:first-child { font-size: 1.1rem; color: var(--text-light-gray); }
+        .total-value-row span:last-child {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-green);
+        }
+        
+        .chart-section {
+             background-color: var(--bg-slate);
+             border-radius: 1rem;
+             margin-top: 1.5rem;
+             padding: 1rem;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
     <div class="container">
 
-        <!-- Header -->
-        <header class="text-center space-y-2">
-            <h1 class="text-2xl font-bold text-blue-400">SIP Calculator</h1>
-            <p>Plan your future investments with ease.</p>
+        <header>
+            <h1>SIP Calculator</h1>
+            <p>Visualize Your Wealth Creation Journey</p>
         </header>
 
-        <!-- Tab Navigation -->
-        <div class="bg-gray-900 rounded-t-2xl p-2 sticky top-0 z-10">
-            <nav class="flex space-x-2" aria-label="Tabs">
-                <button id="sipTab" class="tab-btn text-white bg-blue-600 px-4 py-2 w-1/2 text-center font-semibold rounded-lg transition">
-                    SIP
-                </button>
-                <button id="lumpsumTab" class="tab-btn text-gray-400 px-4 py-2 w-1/2 text-center font-semibold rounded-lg transition">
-                    Lump Sum
-                </button>
-            </nav>
+        <div class="tabs-container">
+            <div id="tabHighlight" class="tab-highlight"></div>
+            <button id="sipTab" class="tab-btn active">SIP</button>
+            <button id="lumpsumTab" class="tab-btn">Lump Sum</button>
         </div>
 
-        <!-- Main Calculator Section -->
-        <main class="bg-gray-800 rounded-b-2xl shadow-lg">
+        <main>
             <!-- SIP Content -->
-            <div id="sipContent" class="space-y-6">
-                <!-- Monthly Investment Input -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label for="monthlyInvestment" class="font-medium text-gray-300">Monthly Investment</label>
-                         <div class="input-group">
-                            <span class="text-lg font-semibold text-blue-300 mr-1">₹</span>
-                            <input type="number" inputmode="numeric" pattern="[0-9]*" id="monthlyInvestmentInput" value="10000" class="text-lg font-semibold text-blue-300">
+            <div id="sipContent">
+                <div class="input-block">
+                    <div class="label-group">
+                        <label for="monthlyInvestment">Monthly Investment</label>
+                        <div class="number-input-wrapper" style="width: 130px;">
+                            <span style="color: var(--text-gray); font-weight: 600;">₹</span>
+                            <input type="number" id="monthlyInvestmentInput" value="10000">
                         </div>
                     </div>
                     <input type="range" id="monthlyInvestment" min="500" max="100000" step="500" value="10000">
                 </div>
-                <!-- Expected Return Rate Input (SIP) -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label for="returnRateSip" class="font-medium text-gray-300">Expected Return Rate (p.a.)</label>
-                        <span class="text-lg font-semibold text-blue-300"><span id="returnRateSipValue">12</span>%</span>
+                <div class="input-block">
+                    <div class="label-group">
+                        <label>Expected Return (p.a.)</label>
+                        <span class="input-value"><span id="returnRateSipValue">12</span>%</span>
                     </div>
                     <input type="range" id="returnRateSip" min="1" max="30" step="0.5" value="12">
                 </div>
-                <!-- Time Period Input (SIP) -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label for="timePeriodSip" class="font-medium text-gray-300">Time Period</label>
-                        <span class="text-lg font-semibold text-blue-300"><span id="timePeriodSipValue">10</span> Years</span>
+                <div class="input-block">
+                    <div class="label-group">
+                        <label>Time Period</label>
+                        <span class="input-value"><span id="timePeriodSipValue">10</span> <span class="input-value-small">Years</span></span>
                     </div>
                     <input type="range" id="timePeriodSip" min="1" max="40" step="1" value="10">
                 </div>
             </div>
 
-            <!-- Lumpsum Content (Hidden by default) -->
-            <div id="lumpsumContent" class="hidden space-y-6">
-                 <!-- Lumpsum Investment Input -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label for="lumpsum" class="font-medium text-gray-300">Lump Sum Investment</label>
-                        <div class="input-group">
-                            <span class="text-lg font-semibold text-blue-300 mr-1">₹</span>
-                            <input type="number" inputmode="numeric" pattern="[0-9]*" id="lumpsumInput" value="500000" class="text-lg font-semibold text-blue-300 lumpsum">
+            <!-- Lumpsum Content -->
+            <div id="lumpsumContent" class="hidden">
+                <div class="input-block">
+                     <div class="label-group">
+                        <label for="lumpsum">Total Investment</label>
+                        <div class="number-input-wrapper" style="width: 150px;">
+                             <span style="color: var(--text-gray); font-weight: 600;">₹</span>
+                            <input type="number" id="lumpsumInput" value="500000">
                         </div>
                     </div>
-                    <input type="range" id="lumpsum" min="10000" max="2000000" step="10000" value="500000">
+                    <input type="range" id="lumpsum" min="10000" max="5000000" step="10000" value="500000">
                 </div>
-                <!-- Expected Return Rate Input (Lumpsum) -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label for="returnRateLumpsum" class="font-medium text-gray-300">Expected Return Rate (p.a.)</label>
-                        <span class="text-lg font-semibold text-blue-300"><span id="returnRateLumpsumValue">12</span>%</span>
+                <div class="input-block">
+                    <div class="label-group">
+                        <label>Expected Return (p.a.)</label>
+                        <span class="input-value"><span id="returnRateLumpsumValue">12</span>%</span>
                     </div>
                     <input type="range" id="returnRateLumpsum" min="1" max="30" step="0.5" value="12">
                 </div>
-                <!-- Time Period Input (Lumpsum) -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <label for="timePeriodLumpsum" class="font-medium text-gray-300">Time Period</label>
-                        <span class="text-lg font-semibold text-blue-300"><span id="timePeriodLumpsumValue">10</span> Years</span>
+                 <div class="input-block">
+                    <div class="label-group">
+                        <label>Time Period</label>
+                        <span class="input-value"><span id="timePeriodLumpsumValue">10</span> <span class="input-value-small">Years</span></span>
                     </div>
                     <input type="range" id="timePeriodLumpsum" min="1" max="40" step="1" value="10">
                 </div>
             </div>
         </main>
 
-        <!-- Results Section -->
-        <section id="results" class="shadow-lg space-y-4">
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Invested Amount</span>
-                <span id="investedAmount" class="text-xl font-bold">₹ 0</span>
+        <section class="results-section">
+            <div class="result-row">
+                <span>Invested Amount</span>
+                <span id="investedAmount">₹ 0</span>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Estimated Returns</span>
-                <span id="estimatedReturns" class="text-xl font-bold text-green-400">₹ 0</span>
+            <div class="result-row">
+                <span>Estimated Returns</span>
+                <span id="estimatedReturns" style="color: var(--accent-green);">₹ 0</span>
             </div>
             <hr>
-            <div class="flex justify-between items-center">
-                <span class="font-semibold text-gray-300">Total Value</span>
-                <span id="totalValue" class="text-2xl font-bold text-green-400">₹ 0</span>
+            <div class="result-row total-value-row">
+                <span>Total Value</span>
+                <span id="totalValue">₹ 0</span>
             </div>
         </section>
 
-        <!-- Chart Section -->
-        <section class="chart-section shadow-lg">
-            <div id="investmentChartContainer" class="w-full" style="height: 256px;"></div>
+        <section class="chart-section">
+            <div id="investmentChartContainer" style="height: 250px; width: 100%;"></div>
         </section>
 
     </div>
 
     <script>
-        // Self-invoking function to avoid polluting the global scope
         (() => {
-            // --- Wait for DOM to be ready ---
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initializeCalculator);
             } else {
@@ -260,10 +304,10 @@
 
             function initializeCalculator() {
                 try {
-                    // --- State and Cache ---
                     const elements = {
                         sipTab: document.getElementById('sipTab'),
                         lumpsumTab: document.getElementById('lumpsumTab'),
+                        tabHighlight: document.getElementById('tabHighlight'),
                         sipContent: document.getElementById('sipContent'),
                         lumpsumContent: document.getElementById('lumpsumContent'),
                         monthlyInvestmentSlider: document.getElementById('monthlyInvestment'),
@@ -288,7 +332,6 @@
                         style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0,
                     });
 
-                    // --- Core Logic ---
                     function updateCalculations() {
                         try {
                             elements.returnRateSipValue.textContent = elements.returnRateSipSlider.value;
@@ -326,28 +369,24 @@
                         }
                     }
                     
-                    // --- UI Updates ---
                     function switchTab(tab) {
                         activeTab = tab;
                         if (tab === 'sip') {
-                            elements.sipTab.style.backgroundColor = 'var(--blue-600)';
-                            elements.sipTab.style.color = 'var(--text-white)';
-                            elements.lumpsumTab.style.backgroundColor = 'transparent';
-                            elements.lumpsumTab.style.color = 'var(--text-gray-400)';
+                            elements.sipTab.classList.add('active');
+                            elements.lumpsumTab.classList.remove('active');
+                            elements.tabHighlight.style.transform = 'translateX(0%)';
                             elements.sipContent.classList.remove('hidden');
                             elements.lumpsumContent.classList.add('hidden');
                         } else {
-                            elements.lumpsumTab.style.backgroundColor = 'var(--blue-600)';
-                            elements.lumpsumTab.style.color = 'var(--text-white)';
-                            elements.sipTab.style.backgroundColor = 'transparent';
-                            elements.sipTab.style.color = 'var(--text-gray-400)';
+                            elements.lumpsumTab.classList.add('active');
+                            elements.sipTab.classList.remove('active');
+                            elements.tabHighlight.style.transform = 'translateX(100%)';
                             elements.lumpsumContent.classList.remove('hidden');
                             elements.sipContent.classList.add('hidden');
                         }
                         updateCalculations();
                     }
                     
-                    // --- Charting ---
                     function updateSvgChart(P, L, annualRate, t) {
                         try {
                             const container = elements.chartContainer;
@@ -368,82 +407,76 @@
                             }
 
                             const maxValue = Math.max(1, ...valueData);
-                            const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+                            const padding = { top: 20, right: 10, bottom: 30, left: 50 };
 
                             const xScale = (val) => padding.left + (t > 0 ? (val / t) : 0) * (chartWidth - padding.left - padding.right);
                             const yScale = (val) => (chartHeight - padding.bottom) - (val / maxValue) * (chartHeight - padding.bottom - padding.top);
 
                             const createPath = (data) => 'M' + years.map((y, i) => `${xScale(y).toFixed(2)} ${yScale(data[i]).toFixed(2)}`).join(' L');
-                            const investedPath = createPath(investedData);
-                            const valuePath = createPath(valueData);
+                            
+                            const valuePathData = createPath(valueData);
+                            const investedPathData = createPath(investedData);
+
+                            const areaPathData = valuePathData + ` L ${xScale(t).toFixed(2)} ${yScale(0).toFixed(2)} L ${xScale(0).toFixed(2)} ${yScale(0).toFixed(2)} Z`;
 
                             let yAxis = '', xAxis = '';
                             const formatYAxisLabel = (value) => {
                                 if (value >= 10000000) return (value / 10000000).toFixed(1) + ' Cr';
                                 if (value >= 100000) return (value / 100000).toFixed(1) + ' L';
-                                if (value >= 1000) return (value / 1000).toFixed(1) + ' K';
+                                if (value >= 1000) return (value / 1000).toFixed(0) + 'K';
                                 return Math.round(value);
                             };
-                            for (let i = 0; i <= 5; i++) {
-                                const value = (maxValue / 5) * i;
+                            for (let i = 0; i <= 4; i++) {
+                                const value = (maxValue / 4) * i;
                                 const y = yScale(value);
-                                yAxis += `<line x1="${padding.left}" y1="${y}" x2="${chartWidth - padding.right}" y2="${y}" stroke="#4a5568" stroke-dasharray="2,2" /><text x="${padding.left - 10}" y="${y + 4}" fill="#a0aec0" text-anchor="end" font-size="12">${formatYAxisLabel(value)}</text>`;
+                                yAxis += `<line x1="${padding.left}" y1="${y}" x2="${chartWidth - padding.right}" y2="${y}" stroke="var(--bg-light-slate)" stroke-dasharray="2,3" /><text x="${padding.left - 8}" y="${y + 4}" fill="var(--text-gray)" text-anchor="end" font-size="12">${formatYAxisLabel(value)}</text>`;
                             }
-                            const xLabelCount = Math.min(t, 5);
+                            const xLabelCount = Math.min(t, 4);
                             if(t > 0) {
                                 for (let i = 0; i <= xLabelCount; i++) {
                                     const year = Math.round((t / xLabelCount) * i);
-                                    xAxis += `<text x="${xScale(year)}" y="${chartHeight - padding.bottom + 20}" fill="#a0aec0" text-anchor="middle" font-size="12">${year}Y</text>`;
+                                    xAxis += `<text x="${xScale(year)}" y="${chartHeight - 5}" fill="var(--text-gray)" text-anchor="middle" font-size="12">${year}Y</text>`;
                                 }
-                            } else {
-                                 xAxis += `<text x="${xScale(0)}" y="${chartHeight - padding.bottom + 20}" fill="#a0aec0" text-anchor="middle" font-size="12">0Y</text>`;
                             }
 
-                            const legend = `<rect x="${padding.left}" y="0" width="10" height="10" fill="#60a5fa" /><text x="${padding.left + 15}" y="9" fill="#d1d5db" font-size="12">Invested</text><rect x="${padding.left + 80}" y="0" width="10" height="10" fill="#4ade80" /><text x="${padding.left + 95}" y="9" fill="#d1d5db" font-size="12">Value</text>`;
-                            
-                            container.innerHTML = `<svg width="100%" height="100%" viewBox="0 0 ${chartWidth} ${chartHeight}">${yAxis}${xAxis}<path d="${investedPath}" stroke="#60a5fa" fill="none" stroke-width="2" /><path d="${valuePath}" stroke="#4ade80" fill="none" stroke-width="2" />${legend}</svg>`;
+                            const svg = `
+                                <svg width="100%" height="100%" viewBox="0 0 ${chartWidth} ${chartHeight}">
+                                    <defs>
+                                        <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="var(--accent-green)" stop-opacity="0.2" />
+                                            <stop offset="100%" stop-color="var(--accent-green)" stop-opacity="0" />
+                                        </linearGradient>
+                                    </defs>
+                                    ${yAxis}
+                                    ${xAxis}
+                                    <path d="${investedPathData}" stroke="var(--accent-blue)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="${areaPathData}" fill="url(#areaGradient)" />
+                                    <path d="${valuePathData}" stroke="var(--accent-green)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>`;
+                            container.innerHTML = svg;
                         } catch (error) {
                             console.error("Error drawing SVG chart:", error);
-                            elements.chartContainer.innerHTML = `<p style="color: #9ca3af; text-align: center;">Chart could not be drawn.</p>`;
+                            container.innerHTML = `<p style="color: var(--text-gray); text-align: center;">Chart is not available.</p>`;
                         }
                     }
 
-                    // --- Event Listener Setup ---
                     function setupEventListeners() {
                         elements.sipTab.addEventListener('click', () => switchTab('sip'));
                         elements.lumpsumTab.addEventListener('click', () => switchTab('lumpsum'));
 
-                        // Explicitly connect all interactive elements
                         const allInputs = [
                             elements.monthlyInvestmentInput, elements.monthlyInvestmentSlider,
                             elements.returnRateSipSlider, elements.timePeriodSipSlider,
                             elements.lumpsumInput, elements.lumpsumSlider,
                             elements.returnRateLumpsumSlider, elements.timePeriodLumpsumSlider
                         ];
-                        
-                        allInputs.forEach(input => {
-                            input.addEventListener('input', updateCalculations);
-                        });
+                        allInputs.forEach(input => input.addEventListener('input', updateCalculations));
 
-                        // Sync text inputs with sliders
-                        elements.monthlyInvestmentInput.addEventListener('input', () => {
-                            elements.monthlyInvestmentSlider.value = elements.monthlyInvestmentInput.value;
-                        });
-                        elements.monthlyInvestmentSlider.addEventListener('input', () => {
-                            elements.monthlyInvestmentInput.value = elements.monthlyInvestmentSlider.value;
-                        });
-                        elements.lumpsumInput.addEventListener('input', () => {
-                            elements.lumpsumSlider.value = elements.lumpsumInput.value;
-                        });
-                        elements.lumpsumSlider.addEventListener('input', () => {
-                            elements.lumpsumInput.value = elements.lumpsumSlider.value;
-                        });
-
-                        // Add blur validation for number inputs
-                        const validateOnBlur = (inputEl, sliderEl) => {
-                             inputEl.addEventListener('blur', () => {
-                                const min = parseFloat(sliderEl.min);
-                                const max = parseFloat(sliderEl.max);
+                        const syncInputs = (inputEl, sliderEl) => {
+                            inputEl.addEventListener('input', () => sliderEl.value = inputEl.value);
+                            sliderEl.addEventListener('input', () => inputEl.value = sliderEl.value);
+                            inputEl.addEventListener('blur', () => {
+                                const min = parseFloat(sliderEl.min), max = parseFloat(sliderEl.max);
                                 let value = Math.max(min, parseFloat(inputEl.value) || min);
                                 if (value > max) value = max;
                                 inputEl.value = value;
@@ -451,11 +484,9 @@
                                 updateCalculations();
                             });
                         };
-                        validateOnBlur(elements.monthlyInvestmentInput, elements.monthlyInvestmentSlider);
-                        validateOnBlur(elements.lumpsumInput, elements.lumpsumSlider);
+                        syncInputs(elements.monthlyInvestmentInput, elements.monthlyInvestmentSlider);
+                        syncInputs(elements.lumpsumInput, elements.lumpsumSlider);
 
-
-                        // Redraw chart on resize
                         let resizeTimeout;
                         window.addEventListener('resize', () => {
                             clearTimeout(resizeTimeout);
@@ -463,13 +494,12 @@
                         });
                     }
                     
-                    // --- Initialization ---
                     setupEventListeners();
                     switchTab('sip');
 
                 } catch (error) {
                     console.error("Critical error on initialization:", error);
-                    document.body.innerHTML = '<p style="color:red;padding:1rem;">A critical error occurred. The calculator cannot start.</p>';
+                    document.body.innerHTML = `<p style="color:red;padding:1rem;">A critical error occurred. The calculator cannot start.</p>`;
                 }
             }
         })();
